@@ -20,8 +20,8 @@ def run():
     width = stream_motion_detector.get_stream_width()
     height = stream_motion_detector.get_stream_height()
 
-    video_writer = VideoWriter("/var/home/jorchube/Desktop/output.avi", width, height)
-    video_writer.open()
+    video_writer = VideoWriter()
+    video_writer.open("/var/home/jorchube/Desktop/output.avi", width, height)
 
     while True:
         frame, is_motion_detected = stream_motion_detector.get_frame_with_motion_detected()

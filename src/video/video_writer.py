@@ -4,17 +4,14 @@ from video.frame import Frame
 
 
 class VideoWriter:
-    def __init__(self, output_path, width, height):
-        self._width = width
-        self._height = height
-        self._output_path = output_path
+    def __init__(self):
         self._writer = None
 
-    def open(self):
+    def open(self, output_path, width, height):
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
         fps = 5
-        dimensions = (self._width, self._height)
-        self._writer = cv2.VideoWriter(self._output_path, fourcc, fps, dimensions)
+        dimensions = (width, height)
+        self._writer = cv2.VideoWriter(output_path, fourcc, fps, dimensions)
 
     def write_frame(self, frame: Frame):
         self._writer.write(frame.get_raw())
