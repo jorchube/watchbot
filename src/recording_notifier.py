@@ -10,7 +10,9 @@ class RecordingNotifier:
 
     def recording_finished(self, recording_file_path: str) -> None:
         caption = self._generate_video_notification_caption()
-        self._telegram_bot.send_video_to_chat(self._telegram_chat_id, recording_file_path, caption=caption)
+        self._telegram_bot.send_video_to_chat(
+            self._telegram_chat_id, recording_file_path, caption=caption
+        )
 
     def _generate_video_notification_caption(self):
         now = datetime.now(tz=ZoneInfo("Europe/Madrid"))

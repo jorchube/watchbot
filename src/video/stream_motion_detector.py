@@ -37,7 +37,9 @@ class StreamMotionDetector:
 
         delta_frame = _DeltaFrame(previous_frame, self._current_frame)
         is_motion_detected = delta_frame.is_significative()
-        frame_with_deltas = delta_frame.copy_frame_with_deltas_drawn_as_bounding_boxes(self._current_frame)
+        frame_with_deltas = delta_frame.copy_frame_with_deltas_drawn_as_bounding_boxes(
+            self._current_frame
+        )
 
         return Frame(frame_with_deltas), is_motion_detected
 
@@ -57,7 +59,9 @@ class _DeltaFrame:
         self._diff_threshold = 20
         self._significative_diff_area = 100
         raw_diff = self._diff(frame1, frame2)
-        self._significative_contours = self._get_contours(raw_diff, min_contour_area=self._significative_diff_area)
+        self._significative_contours = self._get_contours(
+            raw_diff, min_contour_area=self._significative_diff_area
+        )
 
     def copy_frame_with_deltas_drawn_as_bounding_boxes(self, frame):
         frame_copy = frame.copy()
@@ -71,12 +75,12 @@ class _DeltaFrame:
         return len(self._significative_contours) > 0
 
     def _diff(self, frame1, frame2):
-        gaussian_kernel_size = (15,15)
+        gaussian_kernel_size = (15, 15)
 
         f1 = self._get_raw_grayscale(frame1)
         f2 = self._get_raw_grayscale(frame2)
-        soft_f1 =cv2.GaussianBlur(src=f1, ksize=gaussian_kernel_size, sigmaX=0)
-        soft_f2 =cv2.GaussianBlur(src=f2, ksize=gaussian_kernel_size, sigmaX=0)
+        soft_f1 = cv2.GaussianBlur(src=f1, ksize=gaussian_kernel_size, sigmaX=0)
+        soft_f2 = cv2.GaussianBlur(src=f2, ksize=gaussian_kernel_size, sigmaX=0)
 
         diff = cv2.absdiff(src1=soft_f1, src2=soft_f2)
         return diff
@@ -86,16 +90,35 @@ class _DeltaFrame:
 
     def _draw_contour_bounds_on_frame(self, contour, frame):
         (x, y, width, height) = cv2.boundingRect(contour)
-        cv2.rectangle(img=frame, pt1=(x, y), pt2=(x+width, y+height), color=(0, 0, 255), thickness=1)
+        cv2.rectangle(
+            img=frame,
+            pt1=(x, y),
+            pt2=(x + width, y + height),
+            color=(0, 0, 255),
+            thickness=1,
+        )
 
-    def _get_contours(self, raw_diff, min_contour_area = 100):
+    def _get_contours(self, raw_diff, min_contour_area=100):
         kernel = np.ones((5, 5))
-        dilated_diff =  cv2.dilate(raw_diff, kernel, 1)
-        success, threshold_frame = cv2.threshold(src=dilated_diff, thresh=self._diff_threshold, maxval=255, type=cv2.THRESH_BINARY)
+        dilated_diff = cv2.dilate(raw_diff, kernel, 1)
+        success, threshold_frame = cv2.threshold(
+            src=dilated_diff,
+            thresh=self._diff_threshold,
+            maxval=255,
+            type=cv2.THRESH_BINARY,
+        )
         if not success:
             return list()
 
-        contours, _ = cv2.findContours(image=threshold_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
-        significative_contours = list(filter(lambda contour: cv2.contourArea(contour) >= min_contour_area, contours))
+        contours, _ = cv2.findContours(
+            image=threshold_frame,
+            mode=cv2.RETR_EXTERNAL,
+            method=cv2.CHAIN_APPROX_SIMPLE,
+        )
+        significative_contours = list(
+            filter(
+                lambda contour: cv2.contourArea(contour) >= min_contour_area, contours
+            )
+        )
 
         return significative_contours

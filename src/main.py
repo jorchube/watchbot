@@ -14,15 +14,18 @@ def run(configuration: Configuration):
     motion_watcher = MotionWatcher(
         video_stream_uri=configuration.VIDEO_STREAM_URI,
         stream_motion_detector=StreamMotionDetector(),
-        video_writer=VideoWriter()
+        video_writer=VideoWriter(),
     )
     recording_notifier = RecordingNotifier(
         telegram_bot=Bot(configuration.TELEGRAM_BOT_AUTH_TOKEN),
-        telegram_chat_id=configuration.TELEGRAM_CHAT_ID
+        telegram_chat_id=configuration.TELEGRAM_CHAT_ID,
     )
 
-    motion_watcher.install_recording_finished_callback(recording_notifier.recording_finished)
+    motion_watcher.install_recording_finished_callback(
+        recording_notifier.recording_finished
+    )
     motion_watcher.start()
+
 
 if __name__ == "__main__":
     logging.basicConfig(

@@ -1,4 +1,3 @@
-
 class Frame:
     def __init__(self, stream_frame):
         self._frame = stream_frame
