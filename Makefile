@@ -1,8 +1,8 @@
 setup-dev-environment:
 	pipenv install --dev
 
-setup-prod-environment:
-	pipenv install
+setup-container-environment:
+	pipenv install --system --deploy
 
 test:
 	pytest . -vv
