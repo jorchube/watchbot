@@ -1,0 +1,16 @@
+FROM quay.io/fedora/fedora:latest
+
+RUN dnf -y install make pip mesa-libGL
+RUN pip install pipenv
+
+RUN mkdir /build
+ADD ../Pipfile.lock /build/
+ADD ../Pipfile /build/
+ADD ../Makefile /build/
+WORKDIR /build
+RUN make setup-container-environment
+
+VOLUME /app
+
+WORKDIR /app
+ENTRYPOINT ["bash", "./container/app-entrypoint.sh"]
