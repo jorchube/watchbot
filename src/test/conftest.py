@@ -10,3 +10,8 @@ def mock_stream_motion_detector():
 @pytest.fixture
 def mock_video_writer():
     return mock.MagicMock()
+
+
+@pytest.fixture
+def mock_telegram_bot():
+    return mock.MagicMock()
