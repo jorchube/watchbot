@@ -24,6 +24,10 @@ class MotionWatcher:
     def install_recording_finished_callback(self, callback: Callable[[str], None]) -> None:
         self._recording_finished_callback = callback
 
+    def start(self):
+        while True:
+            self._poll_motion_detector_and_record_video_when_detecting_motion()
+
     def _poll_motion_detector_and_record_video_when_detecting_motion(self):
         frame, is_motion_detected = self._stream_motion_detector.get_frame_with_motion_detected()
 
