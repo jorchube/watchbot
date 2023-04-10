@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 from typing import Callable
 
 from video.stream_motion_detector import StreamMotionDetector
@@ -42,6 +43,7 @@ class MotionWatcher:
         ) = self._stream_motion_detector.get_frame_with_motion_detected()
 
         if self._should_start_recording(is_motion_detected):
+            logging.debug("Motion detected")
             self._start_recording()
 
         if self._is_recording():
@@ -53,7 +55,8 @@ class MotionWatcher:
     def _start_recording(self):
         width = self._stream_motion_detector.get_stream_width()
         height = self._stream_motion_detector.get_stream_height()
-        self._video_writer.open(self._RECORDING_OUTPUT_PATH, width, height)
+        framerate = self._stream_motion_detector.get_stream_framerate()
+        self._video_writer.open(self._RECORDING_OUTPUT_PATH, width, height, framerate)
 
         self._keep_recording_until = datetime.now() + timedelta(
             seconds=self._RECORDING_DURATION_SECONDS

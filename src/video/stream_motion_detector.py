@@ -23,6 +23,9 @@ class StreamMotionDetector:
     def get_stream_height(self):
         return int(self._stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
+    def get_stream_framerate(self):
+        return int(self._stream.get(cv2.CAP_PROP_FPS))
+
     def open_stream(self, uri):
         self._uri = uri
         self._stream = cv2.VideoCapture(self._uri)

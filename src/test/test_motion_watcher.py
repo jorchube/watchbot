@@ -45,6 +45,7 @@ class TestMotionWatcher:
         )
         mock_stream_motion_detector.get_stream_width.return_value = 640
         mock_stream_motion_detector.get_stream_height.return_value = 480
+        mock_stream_motion_detector.get_stream_framerate.return_value = 24
 
         motion_recorder = MotionWatcher(
             "rtsp://video:stream/uri", mock_stream_motion_detector, mock_video_writer
@@ -55,7 +56,7 @@ class TestMotionWatcher:
 
         mock_stream_motion_detector.get_frame_with_motion_detected.assert_called_once()
         mock_video_writer.open.assert_called_once_with(
-            "/tmp/watchbot-video.avi", 640, 480
+            "/tmp/watchbot-video.avi", 640, 480, 24
         )
         mock_video_writer.write_frame.assert_called_once_with("a frame")
 
@@ -119,11 +120,12 @@ class TestMotionWatcher:
         )
         mock_stream_motion_detector.get_stream_width.return_value = 640
         mock_stream_motion_detector.get_stream_height.return_value = 480
+        mock_stream_motion_detector.get_stream_framerate.return_value = 24
 
         with freeze_time("2023-03-31T16:53:00+02:00"):
             motion_recorder._poll_motion_detector_and_record_video_when_detecting_motion()
             mock_video_writer.open.assert_called_once_with(
-                "/tmp/watchbot-video.avi", 640, 480
+                "/tmp/watchbot-video.avi", 640, 480, 24
             )
             mock_video_writer.write_frame.assert_called_once_with("a frame")
 
@@ -142,7 +144,7 @@ class TestMotionWatcher:
         with freeze_time("2023-03-31T16:56:12+02:00"):
             motion_recorder._poll_motion_detector_and_record_video_when_detecting_motion()
             mock_video_writer.open.assert_called_once_with(
-                "/tmp/watchbot-video.avi", 640, 480
+                "/tmp/watchbot-video.avi", 640, 480, 24
             )
             mock_video_writer.write_frame.assert_called_once_with("a frame")
 
@@ -160,6 +162,7 @@ class TestMotionWatcher:
         )
         mock_stream_motion_detector.get_stream_width.return_value = 640
         mock_stream_motion_detector.get_stream_height.return_value = 480
+        mock_stream_motion_detector.get_stream_framerate.return_value = 24
 
         recording_finished = mock.MagicMock()
         motion_recorder.install_recording_finished_callback(recording_finished)
@@ -167,7 +170,7 @@ class TestMotionWatcher:
         with freeze_time("2023-03-31T16:53:00+02:00"):
             motion_recorder._poll_motion_detector_and_record_video_when_detecting_motion()
             mock_video_writer.open.assert_called_once_with(
-                "/tmp/watchbot-video.avi", 640, 480
+                "/tmp/watchbot-video.avi", 640, 480, 24
             )
             mock_video_writer.write_frame.assert_called_once_with("a frame")
             recording_finished.assert_not_called()

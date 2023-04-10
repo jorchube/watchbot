@@ -7,9 +7,9 @@ class VideoWriter:
     def __init__(self):
         self._writer = None
 
-    def open(self, output_path, width, height):
+    def open(self, output_path, width, height, framerate=15):
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        fps = 5
+        fps = framerate
         dimensions = (width, height)
         self._writer = cv2.VideoWriter(output_path, fourcc, fps, dimensions)
 
