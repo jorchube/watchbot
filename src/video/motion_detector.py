@@ -27,7 +27,7 @@ class _FrameDelta:
     def __init__(self, frame1, frame2):
         timestamp_mask = cv2.imread("timestamp-mask.png")
         self._diff_threshold = 20
-        self._significative_diff_area = 100
+        self._significative_diff_area = 25
 
         raw_frame1 = cv2.bitwise_and(frame1.get_raw(), timestamp_mask)
         raw_frame2 = cv2.bitwise_and(frame2.get_raw(), timestamp_mask)
@@ -49,7 +49,7 @@ class _FrameDelta:
         return len(self._significative_contours) > 0
 
     def _diff(self, frame1, frame2):
-        gaussian_kernel_size = (15, 15)
+        gaussian_kernel_size = (5, 5)
 
         f1 = self._get_raw_grayscale(frame1)
         f2 = self._get_raw_grayscale(frame2)
