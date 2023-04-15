@@ -40,7 +40,7 @@ class TestMotionWatcher:
         mock_video_writer.open.assert_called_once_with("/tmp/watchbot-video.avi", 640, 480, 24)
         mock_video_writer.write_frame.assert_called_once()
 
-    def test_it_keeps_recording_video_until_10_seconds_after_first_motion_detection(
+    def test_it_keeps_recording_video_until_20_seconds_after_first_motion_detection(
         self, mock_stream_reader, mock_video_writer, a_frame, a_different_frame
     ):
         motion_watcher = MotionWatcher(
@@ -67,13 +67,13 @@ class TestMotionWatcher:
             mock_video_writer.write_frame.assert_called_once()
 
         mock_video_writer.write_frame.reset_mock()
-        with freeze_time("2023-03-31T16:53:09+02:00"):
+        with freeze_time("2023-03-31T16:53:16+02:00"):
             motion_watcher._read_and_process_frame()
             mock_video_writer.open.assert_not_called()
             mock_video_writer.write_frame.assert_called_once()
 
         mock_video_writer.write_frame.reset_mock()
-        with freeze_time("2023-03-31T16:53:11+02:00"):
+        with freeze_time("2023-03-31T16:53:21+02:00"):
             motion_watcher._read_and_process_frame()
             mock_video_writer.open.assert_not_called()
             mock_video_writer.write_frame.assert_called_once()
@@ -100,7 +100,7 @@ class TestMotionWatcher:
         mock_video_writer.open.reset_mock()
 
         mock_video_writer.write_frame.reset_mock()
-        with freeze_time("2023-03-31T16:53:11+02:00"):
+        with freeze_time("2023-03-31T16:53:21+02:00"):
             motion_watcher._read_and_process_frame()
             mock_video_writer.open.assert_not_called()
             mock_video_writer.write_frame.assert_called_once()
@@ -110,21 +110,21 @@ class TestMotionWatcher:
 
         mock_video_writer.write_frame.reset_mock()
         mock_stream_reader.get_frame.return_value = a_frame
-        with freeze_time("2023-03-31T16:53:12+02:00"):
+        with freeze_time("2023-03-31T16:53:22+02:00"):
             motion_watcher._read_and_process_frame()
             mock_video_writer.open.assert_not_called()
             mock_video_writer.write_frame.assert_not_called()
             mock_video_writer.close.assert_not_called()
 
         mock_stream_reader.get_frame.return_value = a_different_frame
-        with freeze_time("2023-03-31T16:56:10+02:00"):
+        with freeze_time("2023-03-31T16:56:20+02:00"):
             motion_watcher._read_and_process_frame()
             mock_video_writer.open.assert_not_called()
             mock_video_writer.write_frame.assert_not_called()
             mock_video_writer.close.assert_not_called()
 
         mock_stream_reader.get_frame.return_value = a_frame
-        with freeze_time("2023-03-31T16:56:11+02:00"):
+        with freeze_time("2023-03-31T16:56:21+02:00"):
             motion_watcher._read_and_process_frame()
             mock_video_writer.open.assert_called_once_with("/tmp/watchbot-video.avi", 640, 480, 24)
             mock_video_writer.write_frame.assert_called_once()
@@ -152,7 +152,7 @@ class TestMotionWatcher:
 
         mock_video_writer.open.reset_mock()
         mock_video_writer.write_frame.reset_mock()
-        with freeze_time("2023-03-31T16:53:11+02:00"):
+        with freeze_time("2023-03-31T16:53:21+02:00"):
             motion_watcher._read_and_process_frame()
             mock_video_writer.open.assert_not_called()
             mock_video_writer.write_frame.assert_called_once()
