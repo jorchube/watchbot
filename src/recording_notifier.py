@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 from zoneinfo import ZoneInfo
 from telegram.bot import Bot
 
@@ -13,6 +14,8 @@ class RecordingNotifier:
         self._telegram_bot.send_video_to_chat(
             self._telegram_chat_id, recording_file_path, caption=caption
         )
+
+        logging.info(f"Sent video {recording_file_path} to chat {self._telegram_chat_id}")
 
     def _generate_video_notification_caption(self):
         now = datetime.now(tz=ZoneInfo("Europe/Madrid"))

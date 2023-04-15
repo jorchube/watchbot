@@ -1,67 +1,33 @@
-import logging
-from typing import Callable, Tuple
-
 import cv2
 import numpy as np
-
 from video.frame import Frame
 
 
-class StreamFrameReadError(Exception):
-    pass
-
-
-class StreamMotionDetector:
+class MotionDetector:
     def __init__(self) -> None:
-        self._uri = None
-        self._stream = None
         self._current_frame = None
+        self._previous_frame = None
 
-    def get_stream_width(self):
-        return int(self._stream.get(cv2.CAP_PROP_FRAME_WIDTH))
+    def feed_frame(self, frame):
+        self._previous_frame = self._current_frame
+        self._current_frame = frame
 
-    def get_stream_height(self):
-        return int(self._stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    def is_there_motion_in_frame(self) -> bool:
+        if self._previous_frame is None:
+            return False
 
-    def get_stream_framerate(self):
-        return int(self._stream.get(cv2.CAP_PROP_FPS))
+        return _FrameDelta(self._previous_frame, self._current_frame).is_significative()
 
-    def open_stream(self, uri):
-        self._uri = uri
-        self._stream = cv2.VideoCapture(self._uri)
-
-    def get_frame_with_motion_detected(self) -> Tuple[Frame, bool]:
-        is_motion_detected = False
-        previous_frame = self._current_frame
-
-        self._current_frame = self._get_stream_raw_frame()
-        if previous_frame is None:
-            return Frame(self._current_frame), is_motion_detected
-
-        delta_frame = _DeltaFrame(previous_frame, self._current_frame)
-        is_motion_detected = delta_frame.is_significative()
-        frame_with_deltas = delta_frame.copy_frame_with_deltas_drawn_as_bounding_boxes(
-            self._current_frame
-        )
-
-        return Frame(frame_with_deltas), is_motion_detected
-
-    def close_stream(self):
-        self._stream.release()
-
-    def _get_stream_raw_frame(self):
-        is_read_successful, frame = self._stream.read()
-        if not is_read_successful:
-            raise StreamFrameReadError
-
-        return frame
+    def get_frame_with_motion_highlights(self):
+        frame_delta = _FrameDelta(self._previous_frame, self._current_frame)
+        return frame_delta.copy_frame_with_deltas_drawn_as_bounding_boxes(self._current_frame)
 
 
-class _DeltaFrame:
+class _FrameDelta:
     def __init__(self, frame1, frame2):
         self._diff_threshold = 20
         self._significative_diff_area = 100
-        raw_diff = self._diff(frame1, frame2)
+        raw_diff = self._diff(frame1.get_raw(), frame2.get_raw())
         self._significative_contours = self._get_contours(
             raw_diff, min_contour_area=self._significative_diff_area
         )
@@ -70,7 +36,7 @@ class _DeltaFrame:
         frame_copy = frame.copy()
 
         for contour in self._significative_contours:
-            self._draw_contour_bounds_on_frame(contour, frame_copy)
+            self._draw_contour_bounds_on_frame(contour, frame_copy.get_raw())
 
         return frame_copy
 
@@ -91,10 +57,10 @@ class _DeltaFrame:
     def _get_raw_grayscale(self, frame):
         return cv2.cvtColor(src=frame, code=cv2.COLOR_RGB2GRAY)
 
-    def _draw_contour_bounds_on_frame(self, contour, frame):
+    def _draw_contour_bounds_on_frame(self, contour, raw_frame):
         (x, y, width, height) = cv2.boundingRect(contour)
         cv2.rectangle(
-            img=frame,
+            img=raw_frame,
             pt1=(x, y),
             pt2=(x + width, y + height),
             color=(0, 0, 255),
