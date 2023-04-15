@@ -25,9 +25,14 @@ class MotionDetector:
 
 class _FrameDelta:
     def __init__(self, frame1, frame2):
+        timestamp_mask = cv2.imread("timestamp-mask.png")
         self._diff_threshold = 20
         self._significative_diff_area = 100
-        raw_diff = self._diff(frame1.get_raw(), frame2.get_raw())
+
+        raw_frame1 = cv2.bitwise_and(frame1.get_raw(), timestamp_mask)
+        raw_frame2 = cv2.bitwise_and(frame2.get_raw(), timestamp_mask)
+
+        raw_diff = self._diff(raw_frame1, raw_frame2)
         self._significative_contours = self._get_contours(
             raw_diff, min_contour_area=self._significative_diff_area
         )

@@ -7,12 +7,12 @@ from video.frame import Frame
 
 @pytest.fixture
 def a_frame():
-    return Frame(np.zeros((500, 500, 3), dtype = "uint8"))
+    return Frame(np.zeros((480, 640, 3), dtype = "uint8"))
 
 
 @pytest.fixture
 def a_different_frame():
-    return Frame(np.ones((500, 500, 3), dtype = "uint8")*255)
+    return Frame(np.ones((480, 640, 3), dtype = "uint8")*255)
 
 
 @pytest.fixture
