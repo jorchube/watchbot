@@ -20,4 +20,4 @@ class RecordingNotifier:
     def _generate_video_notification_caption(self):
         now = datetime.now(tz=ZoneInfo("Europe/Madrid"))
         now_formatted = now.strftime("%d/%m/%Y - %H:%M")
-        return f"Movimiento detectado en el área del reloj\n{now_formatted}"
+        return f"Motion detected\n{now_formatted}"

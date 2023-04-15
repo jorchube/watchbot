@@ -17,5 +17,5 @@ class TestRecordingNotifier:
         mock_telegram_bot.send_video_to_chat.assert_called_once_with(
             "1234",
             "/tmp/watchbot-video.avi",
-            caption="Movimiento detectado en el área del reloj\n30/03/2023 - 17:33",
+            caption="Motion detected\n30/03/2023 - 17:33",
         )
