@@ -8,7 +8,7 @@ from video.video_writer import VideoWriter
 
 
 class MotionWatcher:
-    _RECORDING_DURATION_SECONDS = 10
+    _RECORDING_DURATION_SECONDS = 20
     _RECORDING_COOLDOWN_SECONDS = 3 * 60
     _RECORDING_OUTPUT_PATH = "/tmp/watchbot-video.avi"
 
