@@ -24,17 +24,19 @@ class MotionDetector:
 
 
 class _FrameDelta:
+    _BLUR_SIZE = 15
+    _MIN_SIGNIFICATIVE_DELTA_AREA = 100
+
     def __init__(self, frame1, frame2):
         timestamp_mask = cv2.imread("timestamp-mask.png")
         self._diff_threshold = 20
-        self._significative_diff_area = 25
 
         raw_frame1 = cv2.bitwise_and(frame1.get_raw(), timestamp_mask)
         raw_frame2 = cv2.bitwise_and(frame2.get_raw(), timestamp_mask)
 
         raw_diff = self._diff(raw_frame1, raw_frame2)
         self._significative_contours = self._get_contours(
-            raw_diff, min_contour_area=self._significative_diff_area
+            raw_diff, min_contour_area=self._MIN_SIGNIFICATIVE_DELTA_AREA
         )
 
     def copy_frame_with_deltas_drawn_as_bounding_boxes(self, frame):
@@ -49,7 +51,7 @@ class _FrameDelta:
         return len(self._significative_contours) > 0
 
     def _diff(self, frame1, frame2):
-        gaussian_kernel_size = (5, 5)
+        gaussian_kernel_size = (self._BLUR_SIZE, self._BLUR_SIZE)
 
         f1 = self._get_raw_grayscale(frame1)
         f2 = self._get_raw_grayscale(frame2)
